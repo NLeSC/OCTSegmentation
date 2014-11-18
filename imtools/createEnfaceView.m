@@ -30,8 +30,12 @@ else
 end
 
 for i = 1:size(enface,1)
-enface(i,:) = enface(i,:) - min(enface(i,:));
-enface(i,:) = enface(i,:) ./ max(enface(i,:));
+    enface(i,:) = enface(i,:) - min(enface(i,:));
+    if max(enface(i,:))
+        enface(i,:) = enface(i,:) ./ max(enface(i,:));
+    else
+       enface(i,:) = 1; 
+    end
 end
 
 end

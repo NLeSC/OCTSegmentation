@@ -27,10 +27,25 @@ enface(:, end-round((end * border)):end) = 0;
 enface = medfilt2(enface, params.ONH_SEGMENT_MEDFILT);
 enface = medfilt2(enface, params.ONH_SEGMENT_MEDFILT);
 
-enfaceMean2 = mean(enface, 2) ./ sum(mean(enface, 2));
-enfaceCP(1) = sum(enfaceMean2 .* single(1:size(enface,1))');
-enfaceMean1 = mean(enface, 1) ./ sum(mean(enface, 1));
-enfaceCP(2) = sum(enfaceMean1 .* single(1:size(enface,2)));
+mnfc2 = mean(enface, 2);
+smnfc2 =  sum(mnfc2);
+if smnfc2 
+    enfaceMean2 = mnfc2 ./ smnfc2;
+    enfaceCP(1) = sum(enfaceMean2 .* single(1:size(enface,1))');
+else
+    enfaceCP(1) =  1;
+
+end
+
+mnfc1 = mean(enface, 1);
+smnfc1 =  sum(mnfc1);
+
+if smnfc1
+    enfaceMean1 = mean(enface, 1) ./ sum(mean(enface, 1));
+    enfaceCP(2) = sum(enfaceMean1 .* single(1:size(enface,2)));
+else
+    enfaceCP(2) = 1;
+end
 
 enfaceTH = enface > 0;
 
