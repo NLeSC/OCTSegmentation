@@ -1,0 +1,230 @@
+Preliminary and by far means not complete manual for:
+
+OCTSEG v0.34 (Optical Coherence Tomography Segmentation and Evaluation GUI)
+
+Main author: Markus Mayer, Pattern recognition lab, University of Erlangen-Nuremberg, Germany
+Contributors: Kris Sheets, Retinal Cell Biology Lab, Neuroscience Center of Excellence, LSU Health Sciences Center, New Orleans, LA, USA
+
+Release of v0.34 in July 2012.
+Contact eMail: markus.mayer@informatik.uni-erlangen.de
+
+--------------------------------------------------------------------------------
+General Information:
+
+How to use the programm:
+
+- Starting the programm, a DOS-window is opened, that gives you information about the current processing state. If you think the programm is stuck, first look at the DOS-window and look if something happens there. If a error is displayed, please try to reproduce the error and send the error message and the description to the beforementioned eMail adress.
+- When segmenting a file, additional files (with a .meta ending) are generated in the same folder where the file is located. The original file is not modified. However, as many .meta files may be generated (for each B-Scan one), it is recommended that you create working folders where you copy your data into. From Version 0.33 on the .meta files may be stored in a binary file format, instead of the text format used up to 0.32. The old .meta files are still supported, and you can switch between test and binary .meta files in the octseg.param parameter file, by setting the BINARY_META from 1 (binary) to 0 (text). Note that the binary storage does not work on all windows systems, due to platform depended storage.
+- As it is mentioned, the data storage is text based. Loading and storing may take a while. Thus switching between files and loading special visualizations (e.g. thickness maps) may be slow. Do not try to speed up the process by clicking multiple times. This may cause errors. It is planed to switch to binary storage in a future version of the programm, for research purposes and debuging the text files are the best solution.
+- When closing a correction programm (retinal layer boundaries, blood vessel positions, optic nerve head position) all the meta data is reloaded in the main programm. This may take a while. The correction programm will not close until all the data is reloaded - just be patient.
+
+Good to know:
+
+- You can either run all the automated segmentations after each other and correct all layers afterwards. This is usefull if you want to have a completly automated segmentation version for evaluation purposes. Or you can segment a layer automatically, correct it, and these corrected results will be used for further segmentation tasks. This is usefull if you just want to obtain perfect segmentations.
+- The single helper programms (visualization, correction, export) can be started only from the main window, however they are independed from the main window. This means for example you can manually correct the segmentations of a file while having the file opened in the visualization tool. To have the results displayed in the visualization tool either reload the file/enface view in the case of a single file or go back and forth in the file list in the case of batch viewing.
+- Some parameters of the programm can be adjusted in the octseg.param file, which must be located in the same folder as the main programm. If you have questions about a certain parameter - write a mail to the beforementioned adress. I would suggest not changing anything except the "COLOR" parameters. These are self-explaining.
+
+
+Current features:
+
+- Supported data: 
+	* Heidelberg Engineering Spectralis RAW data files. Circular scans and ONH centered volume scans.
+	* Images and image lists.
+- Segmentation of 6 prominent layers (including the ILM, RPE and ONFL) on circular and volume scans.
+- Segmentation of the blood vessel positions on circular scans.
+- Segmentation of the ONH position and radius on volume scans.
+- Manual correction of the abovementioned segmentations.
+- Visualization of the data.
+- Visualization of the segmentation results.
+- Visualization of the scan pattern positions on the simultaneously acquired SLO image of the Spectralis data.
+- Visualization of enface views and thickness maps on the SLO image.
+- Export of the RAW-Data information, segmentation positions, as well as retina and RNFL thickness measurements to the common CSV format (i.e. read by e.g. Excel)
+
+Known Bugs:
+
+- Errors/Writeouts of data to wrong files if files are switched before the Meta data is completly loaded.
+- Blood vessel segmentation of volume files is enabled, but uses the same algorithm as on circular scans. This does not work properly. However, if you need this feature, correct the positions manually.
+- The automated ONH segmentation on volumes works only rudimentary, and the resulting ONH circle diameter is set to 1mm by default. You can correct the results manually.
+
+--------------------------------------------------------------------------------
+Main programm:
+
+What is displayed?
+- The menu (File, Automated, Manual, Export, ?)
+After loading a file/directory: 
+- The SLO image of the current file 
+- Some meta information out of the RAW data file
+- A table that shows the current state of the work.
+
+The info table:
+Each row corresponds to a B-Scan. Each column corresponds to a certain task. A check sign means the task has been performed on the B-Scan. A "a" means the task has been performed automatically on the B-Scan. A "m" means that the task has been performed manually or the automated results have been corrected.
+
+Menu - File:
+You can open single files or complete directories. If you open a complete directory it is recommended that only circular scans are located inside this directory. With "Open in Visu" you open the current data set in the Visualization Tool. 
+
+Note: If you do not use .vol files, but want to work with image files instead (for which the support at the moment is rudimentary), this is what you have to keep in mind:
+* No scaling information is available for any image file - i.e, the mu m export of the layer segmentations actually is in pixels.
+* It is assumed that the images are log or double square root intensity scaled. 
+* If you open a single image file, it will be treated as a circular scan. 
+* If you have multiple images in a directory (in the same format!), and you use "Open Directory", they will be treated as circular scans.
+* If you want to open multiple images as a volume, create a .list file located in the same directory as the image files. Such a .list file can be generated by any text editor - just change the usual .txt ending to .list. It should contain the names of the images to load, in the order of the B-Scans, separated by new lines and without any path information. Here is an example:
+
+test.list contains:
+---------------
+bscan01.tif
+bscan02.tif
+bscan03.tif
+bscan04.tif
+---------------
+
+Menu - Automated:
+The automated segmentation tasks can be started from here. Only those tasks are enabled, where the needed data has already been segmented. The current state of the segmentation can be seen in the DOS-Window. The first task (OCTSEG) just writes out a initial meta file.
+
+Menu - Optimization (only on Volume files):
+The volume segmentation is performed (with the exception of preprocessing) on a B-Scan basis. In future versions, an improved 3D segmentation is enabled, that can be accessed through this menu. Currently, only RPE 3D optimization is enabled, and compuation times are very long. You have to test for yourself if this feature is worth the computation time in your application.
+
+Menu - Manual:
+The manual correction programms can be started on the current data set. Manual correction programms are available for the retinal layer boundaries, the blood vessel positions as well as the optic nerve head position. 
+
+Menu - Export:
+You may want to export your segmentation results to the common CSV format.
+
+--------------------------------------------------------------------------------
+Visualizing data
+
+The OCTSEG Visualizer consists of the following elememts:
+- A menu (File, Display, OCT, SLO, ?)
+- A short info text
+- The OCT image (one B-Scan at a time)
+- The SLO image
+- A slider bar to select the file/B-Scan that should be displayed from the current data set.
+
+Menu - File: 
+As in the OCTSEG main programm, you can open single files or directories consisting of circular scans. You have also the possibility to save either the current OCT or SLO view to a common image format (tif, png, jpg...). Or you can save ALL B-Scans of the current data set (either a volume or a directory of circular scans) as images. The images will be saved as they are displayed, i.e. with all the segmentation lines or views enabled.
+
+Menu - Display:
+You have some choices of how the data should be displayed:
+- Scale: You can enable downscaling in transversal B-Scan direction here, with certain given ratios. This might be helpful if you have very wide images.
+- Show corrections: If enabled, the manual corrections will be displayed, and not only the automated segmentations. This affects all views (OCT and SLO).
+- Single Sqrt: Normally the OCT RAW data is double square routed for display, as proposed by Heidelberg Engineering. You can switch to single square root display here.
+- Show marker: A position marker will be shown on both the OCT and SLO image that can be moved by clicking in one of the views. Helpful for finding corresponding positions.
+- Jump to marker: When clicking on the SLO of a volume scan, the OCT view is switched to the B-Scan that corresponds to the point on the SLO image you clicked. This provides an alternative way of moving through your OCT volume, instead of using the slider bar.
+
+Menu - OCT
+The displayed segmentation for the OCT image can be switched on and off.
+
+Menu - SLO
+The menu is separated into 5 parts: Position visualization, position grayscale encoding, enface views, region views and overlay views. 
+- Scan position: Shows the current position in a volume.
+- Scan area: Shows the area on the SLO view that was scanned by the OCT device.
+- Scan pattern: Shows all positions on the SLO that have been scanned by the OCT device.
+
+- All posision entries generate a grayscale coded image (min-max scaled) of the position of the selected boundary. This is helpful to detect false segmentations.
+
+- Full Enface: Creates an enface view (summing along the axial direction) of the complete volume
+- Sklera Enface: Creates an enface view of the area below the RPE. Currently the area is fixed to 20px, this will be parameterized in a future version.
+- RPE enface: Creates an enface view of the area above the RPE. Currently the area is fixed to 10px, this will be parameterized in a future version.
+- NFL enface: Summes the values in between the INFL and ONFL 
+
+- ONH: Shows the ONH region segmented automatically. Don't expect good results here.
+- ONH circle: Shows the center of the ONH and a circle around it - this can be corrected manually.
+- Blood vessels: Shows the blood vessel segmentation. As currently the circular scan algorithm is applied to the volumes: Don't expect good results. Manual correction is possible.
+
+- Complete Retina: Produces a map of the retinal thickness.
+- NFL Thickness: Produces a map of the RNFL thickness. 
+
+Slider bar: 
+You can navigate through your B-Scans (of a volume of circular scan directory) by using the slider bar. Rember that it may take some time for the new image to be displayed due to the text meta information loading (see above).
+
+Zooming:
+A right click on the OCT image zooms in, a second right click out.
+
+--------------------------------------------------------------------------------
+Correcting layer boundaries (Short version)
+
+You can correct retinal layer boundaries with this tool. The position of the boundaries can be changed by simply clicking on a boundary in the OCT view, holding the button down and drawing the new position.
+
+Zooming and scaling (see Visualizing) are also enabled. You can zoom and scale at any time and correct your segmentation in a zoomed or scaled view.
+
+Important to know: When you use the slider bar for navigating, the modified lines will not be saved. If you have finished the manual correction use the "Before & Save" or "Next & Save" Buttons to go to the next file. Your corrections will be saved then.
+
+--------------------------------------------------------------------------------
+Correcting blood vessel positions (Short version)
+
+You can correct the posisions of the blood vessels with this tool. When correcting, 3 modes are available: Invert (the position entry will be inverted from the posision you clicked first), Delete or Blood Vessel. The posisions can be corrected by clicking, holding the Button down and dragging the mouse. 
+
+See "Correcting layer boundaries" for the information on saving, zooming and scaling.
+
+--------------------------------------------------------------------------------
+Correcting the ONH position (Short version)
+
+You can correct the ONH center and radius here. 
+
+--------------------------------------------------------------------------------
+Exporting data to CSV format
+
+This programm can be used to store the segmentation results and header information stored in the Heidelberg Engineering RAW files to a CSV table. 
+
+Header and BScan Information is read from the RAW files. 
+
+Data marked with HE is read from the RAW files, data marked with OCTSEG is the data generated by the OCTSEG programm. Positions are stored in pixels, thickness is stored in mu m. 
+
+European formating means a ',' separator for decimal values instead of a ".".
+
+--------------------------------------------------------------------------------
+
+I hope this software will be of help to you!
+
+Best regards!
+
+--------------------------------------------------------------------------------
+Version Information:
+
+v0.35 (August 2012)
+- Major Bugfix: Thickness exports of layers other than RNFL and retina only exported automated segmentation results, even if a manual segmentation was available. Fixed.
+
+v0.34 (July 2012)
+- Color indexed BMP files may now be opened.
+- Minor bugfixes
+
+v0.33 (May 2012)
+- Visualization of rotated volume scan patterns (e.g. the posterior pole scan pattern from Heidelberg engineering).
+- Binary .meta file writeout (faster than text .meta files).
+- Minor Bugfixes.
+
+v0.32 (December 2011)
+- Support of image data (.tif, .jpg., .pgm) files and .list volumes enabled.
+- Log intensity scaling added in the visualization tool.
+- Subvolume export enabled.
+
+v0.31 (July 2011)
+- Additional export possibilities: Thickness of all layer groups.
+
+v0.3 (July 2011)
+- Minor changes in parameter file.
+- Minor bugfixes.
+- Major change: "Optimization" menu entry in octsegMain program. Preparation in providing an improved 3D segmentation. 
+
+v0.23 (June 2011)
+- Minor Bugfix
+
+v0.22 (June 2011)
+- Major change: Internal processing changes: More data is reused, slight speed increase
+- Minor change: Blood vessel segmentation is now a mandatory precondition for the inner layer segmentation.
+- Minor change: VISU Slo menu restructured, visualization of blood vessel positions on volume scans
+
+v0.21 (May 2011)
+- Minor bugfix: Medfilt1 is not supported for the Matlab "single" datatype on windows machines
+
+v0.2 (May 2011) Major changes:
+- Internal processing changes: Speed increased, memory usage decreased. 
+- Zooming and scaling function enabled in VISU, segmentation correction and blood vessel position correction.
+
+v0.11 (May 2011)
+- Bugfix: Windows path can now have blank signs 
+- Bugfix: If the ONH segmentation fails on Volumes, further segmentation steps are possible
+
+v0.1 (April 2011)
+
+First initial version.
+
