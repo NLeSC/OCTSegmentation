@@ -1,20 +1,39 @@
 function import_oct_csv_file(input_file)
-%IMPORT_OCT_CSV_FILE(INPUT_FILE)
-%  Imports OCT CSV data from the specified file and converts it to a
-%  gray-level image according to formula new_value = 10.^(oct_value/20)
-%  INPUT_FILE:  file to read
+%import_oct_csv_file - imports OCT CSV data (2D) from AMC Mitra Almasian
 
-%  author: ELena Ranguelova
-%  date created: 03-Nov-2014 
-%  last modificaiton date: 07-Nov-2014
-%  modification note: additional rescaling to range [0..255]
+%
+% author: Elena Ranguelova, NLeSc
+% date creation: 03.11.2014
+% last modification date: 07.11.2014
+% modification details: correct gray-level conversion
+% -----------------------------------------------------------------------
+% SYNTAX
+% import_oct_csv_file(input_file)
+%
+% INPUT
+% input_file- imput CSV file 
+%
+% EXAMPLE
+% import_oct_csv_file('..\..\..\Data\Phantom\fantoom0.csv')
+%
+% SEE ALSO
+% import_oct_bin_file for loading the full volume of OCT data
+%
+% REFERENCES
+% e-mail correspondence wth Mitra and Martin
+%
+% NOTES
+% Sometimes the conversion to gray scale is done extra notes
+% according to formula new_value = 10.^(oct_value/20)
+% the function saves the data as a gray scale image into an PNG file
 
 % parameters
 DELIMITER = ',';
 HEADERLINES = 11;
 OUT_FMT = 'png';
 CROP = 1;
-FACTOR
+FACTOR = 2;
+
 % Import the file
 oct_data = importdata(input_file, DELIMITER, HEADERLINES);
 
@@ -33,8 +52,8 @@ image_data = oct_data.data;
 
 if CROP 
     [rows, ] = size(image_data);
-    less_rows = floor(rows/factor);
-    image_data = image_data(1:half_rows,:);
+    less_rows = floor(rows/FACTOR);
+    image_data = image_data(1:less_rows,:);
 end
 % convert to gray levels
 image_data = 10.^(image_data./20);
