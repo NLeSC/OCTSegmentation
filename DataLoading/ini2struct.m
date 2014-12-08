@@ -1,8 +1,7 @@
 function Result = ini2struct(FileName)
-%==========================================================================
+% parsing an INI file returning a structure with section names and keys as fields.
 %  Author: Andriy Nych ( nych.andriy@gmail.com )
 % Version:        733341.4155741782200
-%==========================================================================
 % 
 % INI = ini2struct(FileName)
 % 

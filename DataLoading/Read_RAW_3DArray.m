@@ -24,6 +24,8 @@
 %	fullFileName_RAW = 'SimulatedData_Distance8Bit.RAW';
 %	[data3D, stHeader] = Read_RAW_3DArray(fullFileName_RAW, stInputParameters);
 %
+% NOTE: functions Read_RAW_Header and ValidateInputParameters are
+%       NOT provided,one needs to implement them!
 %------------------------------------------------------------------------------
 
 function [data3D, stHeader] = Read_RAW_3DArray(fullFileName, stInputParameters)

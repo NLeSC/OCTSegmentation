@@ -70,4 +70,4 @@ map = gray(255);
 colormap(map);
 
 % save the image as a Tiff
-imwrite(image_data,output_file,OUT_FMT);
+%imwrite(image_data,output_file,OUT_FMT);

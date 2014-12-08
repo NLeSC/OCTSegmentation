@@ -2,22 +2,25 @@
 %
 % author: Elena Ranguelova, NLeSc
 % date creation: 05-12-2014
-% last modification date:
-% modification details:
+% last modification date: 08-12-2014
+% modification details: loading the data and displaying every display_number-th slice
+%                       output of also image_data- converted to gray scale
 % -----------------------------------------------------------------------
 % SYNTAX
-% [data]=import_oct_bin_file(filename_data, filename_metadata)
+% [data, image_data]=import_oct_bin_file(filename_data, filename_metadata)
 %
 % INPUT
 % filename_data- the filename of the raw data 
 % filename_metadata- the filename of the metadata 
+% display_number - slice number divisable by display_number will be displayed
+
 % OUPTPUT
 % data- 3D output array of voxel values of type uint8
-%
+% image_data- the data convertedto gray scale for visualization
 % EXAMPLE
 % Called form the current file's directory:
 % import_oct_bin_file('..\..\..\Data\Phantom\fantoom 3D\Data.bin',...
-%                   '..\..\..\Data\Phantom\fantoom 3D\DataInfo.ini')
+%                   '..\..\..\Data\Phantom\fantoom 3D\DataInfo.ini', 100)
 %
 % SEE ALSO
 % import_oct_csv_file, ini2struct (from MATLAB file exchange) 
@@ -26,15 +29,15 @@
 % e-mail correspondence with Martin and Dirk from AMC
 %
 % NOTES
-% 
+% Every Nth slice is displayed in a figure for manual verification
 
 %------------------------------------------------------------------------------
 
-function [data] = import_oct_bin_file(filename_data, filename_metadata)
+function [data, image_data] = import_oct_bin_file(filename_data, filename_metadata, display_number)
 
-	% Check syntax.  Must have two arguments.
-	if (nargin ~= 2)
-		error('Usage: [data] = import_oct_bin_file(filename_data, filename_metadata)');
+	% Check syntax.  Must have three arguments.
+	if (nargin ~= 3)
+		error('Usage: [data] = import_oct_bin_file(filename_data, filename_metadata, display_number)');
 	end 
 	if ~exist(filename_data, 'file')
 		error('Error: file passed in to import_oct_bin_file\n%s does not exist.', filename_data);
@@ -44,110 +47,111 @@ function [data] = import_oct_bin_file(filename_data, filename_metadata)
     end
     
 	% Read in metadata and get 3D image array dimensions.
+    disp('--------------------------------');
     disp('Reading the metadata...');
 	meta_struct = ini2struct(filename_metadata);
     
-    % make dimensions numbers
-    x = str2num(meta_struct.dimensions.x);
-    y = str2num(meta_struct.dimensions.y);
-    z = str2num(meta_struct.dimensions.z);
+    % get the volume dimensions
+    x_size = str2double(meta_struct.dimensions.x);
+    y_size = str2double(meta_struct.dimensions.y);
+    z_size = str2double(meta_struct.dimensions.z);
     
-    s = sprintf('The volume dimensions are (%i x %i x %i).',x, y, z);
+    s = sprintf('The volume dimensions are (%i x %i x %i).',x_size, y_size, z_size);
     disp(s);
 
-    disp('Done.');    
-% 	% Extract out sizes to more conveniently-named local variables.
-% 	% Note: fread() requires that x_size and y_size be doubles.
-% 	x_size = double(stHeader.x_size);
-% 	y_size = double(stHeader.y_size);
-% 	z_size = double(stHeader.z_size);
-% 
-% 	% They passed in a structure for stInputParameters.  Make sure they passed in valid numbers.
-% 	% Assign defaults to any fields in stInputParameters that they didn't set.
-% 	% Make sure the starting and ending parameters they passed in (via stInputParameters) 
-% 	% are in range 1 to x_size, 1 to y_size, and 1 to z_size.
-% 	stValidParameters = ValidateInputParameters(stInputParameters, x_size, y_size, z_size);
-% 
-% 	% Get size of output array.  It may be subsampled and be a different size than the input array.
-% 	if stValidParameters.Subsample ~= 1
-% 		subsampledXSize = ceil(double(stValidParameters.XEnd - stValidParameters.XStart + 1) / double(stInputParameters.Subsample));
-% 		subsampledYSize = ceil(double(stValidParameters.YEnd - stValidParameters.YStart + 1) / double(stInputParameters.Subsample));
-% 		subsampledZSize = ceil(double(stValidParameters.ZEnd - stValidParameters.ZStart + 1) / double(stInputParameters.Subsample));
-% 	else
-% 		subsampledXSize = stValidParameters.XEnd - stValidParameters.XStart + 1;
-% 		subsampledYSize = stValidParameters.YEnd - stValidParameters.YStart + 1;
-% 		subsampledZSize = stValidParameters.ZEnd - stValidParameters.ZStart + 1;
-% 	end
-% 
-% 	% Open the image data file for reading.
-% 	fileHandle = fopen(fullFileName, 'rb', stHeader.EndianArg);
-% 	if (fileHandle == -1)
-% 		error(['Read_RAW_3DArray() reports error opening ', fullFileName, ' for input.']);
-% 	end
-% 
-% 	% Skip past header of stHeader.HeaderSize bytes.
-% 	bytesToSkip = int32(stHeader.HeaderSize);
-% 
-% 	% Now, additionally, skip past (ZStart - 1) slices before the ZStart slice begins
-% 	% so that we end up at the beginning byte of the slice that we want, which is ZStart.
-% 	bytesToSkip = bytesToSkip + int32(x_size * y_size * stHeader.BytesPerVoxel * (stValidParameters.ZStart - 1));
-% 	fseek(fileHandle, bytesToSkip, 'bof');
-% 
-% 	if(stHeader.BytesPerVoxel == 1)
-% 		dataLengthString = '*uint8';	% You need the *, otherwise fread returns doubles.
-% 		% Initialize a 3D data array.
-% 		data3D = uint8(zeros([subsampledXSize, subsampledYSize, subsampledZSize]));
-% 	
-% 	elseif(stHeader.BytesPerVoxel == 2)
-% 		dataLengthString = '*uint16';	% You need the *, otherwise fread returns doubles.
-% 		% Initialize a 3D data array.
-% 		data3D = uint16(zeros([subsampledXSize, subsampledYSize, subsampledZSize]));
-% 	
-% 	else
-% 		error('Unsupported BytesPerVoxel %d', stHeader.BytesPerVoxel);
-% 	end
-% 	bytesPerVoxel = stHeader.BytesPerVoxel;
-% 
-% 	% We'll always first read in the full slice.
-% 	% Now determine if we need to subsample or crop that full slice.
-% 	if subsampledXSize ~= x_size || subsampledYSize ~= y_size || subsampledZSize ~= z_size
-% 		needToCropOrSubsample = 1;
-% 	else
-% 		needToCropOrSubsample = 0;
-% 	end
-% 
-% 	% Read in data slice by slice to avoid out of memory error.
-% 	% We'll build up the 3D array slice by slice along the Z direction.
-% 	sliceNumber = 1;
-% 	for z = stValidParameters.ZStart : stValidParameters.Subsample : stValidParameters.ZEnd
-% 		% Read in slice z from input image and put into slice sliceNumber of output image.
-% 		% Reads from the current file pointer position.
-% 		% Note: fread requires that x_size and y_size be doubles.
-% 		oneFullSlice = fread(fileHandle, [x_size, y_size], dataLengthString);
-% 		if needToCropOrSubsample == 1
-% 			% Crop it and subsample it.
-% 			croppedSlice = oneFullSlice(stValidParameters.XStart:stValidParameters.Subsample:stValidParameters.XEnd, stValidParameters.YStart:stValidParameters.Subsample:stValidParameters.YEnd);
-% 			% Assign it, but don't transpose it like in some other formats.
-% 			data3D(:, :, sliceNumber) = croppedSlice;
-% 		else
-% 			% Take the full slice, (not transposed like in some other formats).
-% 			data3D(:, :, sliceNumber) = oneFullSlice;
-% 		end
-% 		%disp(['Read in slice ' num2str(z) ' of input, slice ' num2str(sliceNumber) ' of output']);
-% 		% Skip the next slices if we are subsampling.
-% 		% For example, if we just read slice 1 and the subsampling is 3, the next slice we should
-% 		% read is 4, so we need to skip slices 2 and 3 (skip subsampling-1 slices).
-% 		if stValidParameters.Subsample > 1
-% 			% Calculate how many bytes to skip.
-% 			bytesToSkip = int32(x_size * y_size * bytesPerVoxel * (stValidParameters.Subsample - 1));
-% 			% Skip that many past the current position, which is at the end of the slice we just read.
-% 			fseek(fileHandle, bytesToSkip, 'cof');
-% 		end
-% 		% Increment the slice we are on in the output array.
-% 		sliceNumber = sliceNumber + 1;
-% 	end
-% 
-% 	% Close the file.
-% 	fclose(fileHandle);
+    % get the size of the header
+    header_size = str2double(meta_struct.header.header);
+    s = sprintf('The header size is %i.',header_size);
+    disp(s);
 
-%--------------------------------------------------------------------------
+    % get the endianness- by info from Dirk- big endiaan, but still present
+    % in the header- if the header value shouldbe used uncomment the row below
+    % e = str2double(meta_struct.endianess.endianess);
+    % s = sprintf('The endianess is %i.',e);
+    % disp(s);
+    e = 1;
+    if e 
+        machineformat = 'b';
+    else
+        machineformat = 'l';
+    end
+    
+    % bytes per voxel -info not from header, but from Martin(Dirk)
+    bytes_per_voxel = 4;
+    
+    s = sprintf('The number of bytes per voxel is %i.',bytes_per_voxel);
+    disp(s)
+    
+    disp('Done reading the metadata.');    
+    disp('--------------------------------');
+    
+    disp('Reading the data...');
+	% Open the image data file for reading.
+	file_handle = fopen(filename_data, 'rb', machineformat);
+	if (file_handle == -1)
+		error(['import_oct_bin-file reports error opening ', filename_data, ' for input.']);
+	end
+
+	% Skip past header header_size bytes.
+	bytes_to_skip = int32(header_size);
+
+    if bytes_to_skip > 0
+        fseek(file_handle, bytes_to_skip, 'bof');
+    end
+    
+    % data format given the bytes per voxel
+	if(bytes_per_voxel == 4)
+		data_length_string = '*float32';	% You need the *, otherwise fread returns doubles.
+		% Initialize a 3D data array.
+		data = single(zeros([x_size, y_size, z_size]));	
+	else
+		error('Unsupported bytes_per_voxel %d', bytes_per_voxel);
+	end
+	 
+
+	% Read in data slice by slice to avoid out of memory error.
+	% We'll build up the 3D array slice by slice along the Z direction.
+
+    for z = 1 : z_size
+		% Read in slice z from input image and put into slice sliceNumber of output image.
+		% Reads from the current file pointer position.
+		% Note: fread requires that x_size and y_size be doubles.
+		one_slice = fread(file_handle, [x_size, y_size], data_length_string, machineformat);
+		% Take the full slice, (not transposed like in some other formats).
+		data(:, :, z) = one_slice;
+    end
+
+    disp('Done reading the data.');   
+    
+    % convert to gray scale
+    image_data = 10.^(data./20);
+    % rescale to [0..255]
+    max_value = max(max(max(image_data)));
+    image_data = image_data.*(255/max_value);
+
+    disp('--------------------------------');    
+    disp('Converting the data to gray scale ...');
+    % dsiplay some of the gray scale data
+    fig = figure;
+    display_counter = 0;
+    for z = 1 : (display_number) : z_size
+        % find if the slice_number is divisable by display_number and show
+        % it-  NOT GENERIC ENOUGH CODE YET!
+        if ~rem(z-1,display_number)
+            display_counter = display_counter + 1;
+            figure(fig);
+            subplot(2,5,display_counter);
+            colormap(gray(256));
+            imshow(image_data(:,:,z));
+            s = sprintf('Slice #: %d',z-1);
+            title(s);
+        end
+    end
+        
+    disp('Done converting the data.');   
+	% Close the file.
+	fclose(file_handle);
+
+    disp('--------------------------------');
+    disp('Done.');    
+    disp('--------------------------------');
