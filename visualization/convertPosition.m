@@ -169,8 +169,16 @@ function [aScanNumber bScanNumber] = toOctFromRealWorld(xReal, yReal, octSize, s
     xVecOct = lu - ll;
     yVecOct = rl - ll;
     
-    fracX = (posOct * xVecOct') / (xVecOct * xVecOct');
-    fracY = (posOct * yVecOct') / (yVecOct * yVecOct');
+    if (xVecOct)
+        fracX = (posOct * xVecOct') / (xVecOct * xVecOct');
+    else
+        fracX = 1;
+    end
+    if  (yVecOct)    
+        fracY = (posOct * yVecOct') / (yVecOct * yVecOct');
+    else
+        fracY = 1;
+    end
     
     aScanNumber = fracY * octSize(1);
     bScanNumber = fracX * octSize(2);

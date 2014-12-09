@@ -1118,6 +1118,9 @@ end
 function hSelectorCallback(hObject, eventdata)
     if guiMode == 1 || guiMode == 4
         ActDataDescriptors.bScanNumber = round(get(hSelector, 'Value'));
+        if (ActDataDescriptors.bScanNumber == 0)
+            ActDataDescriptors.bScanNumber = 1;
+        end
     elseif guiMode == 2 || guiMode == 3
         ActDataDescriptors.fileNumber = round(get(hSelector, 'Value'));
     end

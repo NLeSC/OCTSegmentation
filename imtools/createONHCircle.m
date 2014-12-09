@@ -1,6 +1,6 @@
 function octCircle = createONHCircle(DataDescriptor, onhCenter, radius)
 
-if nargin < 3
+if (nargin < 3) || (radius == 0)
     radius = 1;
 end
 
