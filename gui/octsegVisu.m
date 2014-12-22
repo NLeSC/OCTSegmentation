@@ -416,9 +416,9 @@ if nargin > 0 % Intialization if started with parameters
     createAllSLOViews();
     refreshLayout();
     
-    if guiMode == 1 || guiMode == 4 || guiMode == 4
-        setSelectorSize(hSelector, guiMode, ActDataDescriptors);
-    end
+%     if guiMode == 1 || guiMode == 4 || guiMode == 4
+%         setSelectorSize(hSelector, guiMode, ActDataDescriptors);
+%     end
     
     setSelectorSize(hSelector, guiMode, ActDataDescriptors);
     refreshLayout();
@@ -1302,10 +1302,10 @@ function refreshLayout()
         set(hOct, 'Visible', 'on');
         
         if numel(ActDataDescriptors.Header) ~= 0 
-            if ActDataDescriptors.Header.ScanPattern ~= 2
+            if ActDataDescriptors.Header.ScanPattern ~= 2 && ActDataDescriptors.Header.NumBScans > 1
                 set(hSelector, 'Visible', 'on'); 
             else
-                if guiMode == 2
+                if guiMode == 2 && ActDataDescriptors.Header.NumBScans > 1
                     set(hSelector, 'Visible', 'on'); 
                 end
             end
@@ -1338,7 +1338,7 @@ function refreshLayout()
         set(hOct, 'Visible', 'on');
         
         if numel(ActDataDescriptors.Header) ~= 0    
-                if guiMode == 3 && numel(ActDataDescriptors.filenameList) > 1
+                if guiMode == 3 && numel(ActDataDescriptors.filenameList) > 1 && ActDataDescriptors.Header.NumBScans > 1
                     set(hSelector, 'Visible', 'on'); 
                 end
         end

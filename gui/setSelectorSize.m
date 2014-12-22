@@ -5,6 +5,7 @@ function setSelectorSize(hSelector, guiMode, ActDataDescriptors)
 % (octsegVisu, segManCorrect, segManBV, segManSklera)
 % The names of the parameters represent their counterparts in the GUIs
 
+set(hSelector, 'Visible', 'on');
 if guiMode == 1 || guiMode == 4
     if ActDataDescriptors.Header.NumBScans > 1
         minStep = 1/ (ActDataDescriptors.Header.NumBScans - 1);
