@@ -19,8 +19,8 @@
 % image_data- the data convertedto gray scale for visualization
 % EXAMPLE
 % Called form the current file's directory:
-% import_oct_bin_file('..\..\..\Data\Phantom\fantoom 3D\Data.bin',...
-%                   '..\..\..\Data\Phantom\fantoom 3D\DataInfo.ini', 100)
+% import_oct_bin_file('..\..\..\Data\Phantom\3D_bin\Data.bin',...
+%                   '..\..\..\Data\Phantom\3D_bin\DataInfo.ini', 100)
 %
 % SEE ALSO
 % import_oct_csv_file, ini2struct (from MATLAB file exchange) 
@@ -125,6 +125,7 @@ function [data, image_data] = import_oct_bin_file(filename_data, filename_metada
     
     % convert to gray scale
     image_data = 10.^(data./20);
+%    image_data = data;
     % rescale to [0..255]
     max_value = max(max(max(image_data)));
     image_data = image_data.*(255/max_value);
@@ -141,8 +142,8 @@ function [data, image_data] = import_oct_bin_file(filename_data, filename_metada
             display_counter = display_counter + 1;
             figure(fig);
             subplot(2,5,display_counter);
-            colormap(gray(256));
-            imshow(image_data(:,:,z));
+            map = colormap(gray(256));
+            image(image_data(:,:,z),map);
             s = sprintf('Slice #: %d',z-1);
             title(s);
         end
