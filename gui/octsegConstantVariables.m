@@ -7,6 +7,8 @@ function octsegConstantVariables
 % Code by Markus Mayer, Pattern Recognition Lab, 
 % University of Erlangen-Nuremberg, March 2011
 %
+% Elena Ranguelova, NLeSc, Jan 2015
+%
 % Some reminders for code structuring in OCTSEG:
 %
 % In accesing META Tags, the following function should be used:
@@ -84,14 +86,20 @@ TABLE_META_TAGS = { 'ONH', 'ONHauto', 'ONHman'; ...
 %   3: PNG File
 %   4: TIF File
 %   5: List of images
-%   6: Other file
+%   6: CSV
+%   7: Other file
 global FILETYPE;
 FILETYPE.NOOCT = 0;
 FILETYPE.HE = 1;
 FILETYPE.RAW = 2;
 FILETYPE.IMAGE = 3;
-FILETYPE.LIST = 6;
+FILETYPE.LIST = 5;
+FILETYPE.CSV = 6;
 FILETYPE.OTHER = 7;
+
+global CSVSETTINGS;
+CSVSETTINGS.DELIMITER = ',';
+CSVSETTINGS.HEADERLINES = 11;
 
 % Numeric representations for the status of the processed files (used in
 % checkFilesIfProcessed and the calling functions).

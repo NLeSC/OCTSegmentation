@@ -1,7 +1,7 @@
-function [header, BScanHeader, slo, BScans] = openOctImg (path, options)
-% OPENOCTIMG Reads a image file showing a 2D OCT Bscan, log scaled.
-% [HEADER, BSCANHEADER, SLO, BSCANS] = OPENOCTIMG(PATH, OPTIONS)
-% This function performs oct 2D image (xxxx.tif/pgm) reading.
+function [header, BScanHeader, slo, BScans] = openCsv(path, options)
+% OPENCSV Reads an image file showing a 2D OCT Bscan, log scaled, but saved as a CSV file.
+% [HEADER, BSCANHEADER, SLO, BSCANS] = OPEN(PATH, OPTIONS)
+% This function performs oct 2D image (xxxx.csv) reading.
 % HEADER: Artificial header information, to make a struct similar
 %   to HE .vol files
 % BSCANHEADER: B-scan header information.
@@ -10,7 +10,8 @@ function [header, BScanHeader, slo, BScans] = openOctImg (path, options)
 %   The data is min-max scaled and the exponent is taken to make it similar
 %   to HE .vol files for firther processing.
 % PATH: Filename of the image file to read, with ending.
-%
+% Requires calling of the octsegConstantVariables function somewhere
+%   beforehand.
 % OPTIONS: Various output possibilites,
 %   written in the options variable as string text, i.e. 'visu writemeta'
 %   Possibilities:
@@ -21,24 +22,30 @@ function [header, BScanHeader, slo, BScans] = openOctImg (path, options)
 %            not the image data
 %       nodisp: nothing is diplayed during read in
 %
-% Written by Markus Mayer, Pattern Recognition Lab, University of
+% Written by Elena Ranguelova, NLeSc, based on similar code by 
+% Markus Mayer, Pattern Recognition Lab, University of
 % Erlangen-Nuremberg
 %
-% First final Version: August 2010
+% First Version: January 2015
+
+% octsegConstantVariables;
+% global CSVSETTINGS;
 
 %% If only one argument is defined
 if nargin==1,
     options = '';
 end
 %% Open file
-data = imread(path);
-inf = imfinfo(path);
+delimiter = ',';
+headerlines = 11;
+
+oct_data = importdata(path, delimiter, headerlines);
+data = oct_data.data;
 
 %% File header read
 header.Version = 0;
 header.SizeX = size(data,2);
-%header.NumBScans = 1;
-header.NumBScans = numel(inf);
+header.NumBScans = 1;
 header.SizeZ = size(data,1);
 header.ScaleX = 1;
 header.Distance = 1;

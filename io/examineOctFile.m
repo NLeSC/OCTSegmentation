@@ -45,6 +45,10 @@ elseif strcmpi(filenameEnding, 'list')
     numDescriptor = FILETYPE.LIST;
     openFuncHandle =  @openOctList;      
     filenameEnding = '.list';    
+elseif strcmp(filenameEnding, 'csv')
+    numDescriptor = FILETYPE.CSV;
+    openFuncHandle = @openCsv;
+    filenameEnding = '.csv';    
 else
     numDescriptor = FILETYPE.OTHER;
     openFuncHandle = @openOctImg;  
