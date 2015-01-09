@@ -44,13 +44,7 @@ oct_data = importdata(input_file, DELIMITER, HEADERLINES);
 [pathstr,name,] = fileparts(input_file);
 output_file = fullfile(pathstr,strcat(name,'.',out_fmt));
 
-
-% Create new variables in the base workspace from those fields.
-vars = fieldnames(oct_data);
-for i = 1:length(vars)
-    assignin('base', vars{i}, oct_data.(vars{i}));
-end
-
+% get the relevant data
 image_data = oct_data.data;
 
 if CROP 
@@ -59,17 +53,18 @@ if CROP
     image_data = image_data(1:less_rows,:);
 end
 % convert to gray levels
-image_data = 10.^(image_data./20);
+display_data = 10.^(image_data./20);
 % rescale to [0..255]
-min_value =  min(min(image_data));
-max_value = max(max(image_data));
-image_data = (image_data - min_value).*(255/max_value);
+min_value =  min(min(display_data));
+max_value = max(max(display_data));
+display_data = uint16(display_data - min_value).*(255/max_value);
 
 % attach to workspace variable
 assignin('base', 'image_data', image_data);
+assignin('base', 'display_data', display_data);
 
 % visulaise
-image(image_data);
+image(display_data);
 map = gray(255);
 colormap(map);
 
