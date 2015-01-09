@@ -35,7 +35,9 @@ elseif strcmpi(filenameEnding, 'oct')
     numDescriptor = FILETYPE.RAW;
     openFuncHandle = @openPlain;
     filenameEnding = '.oct';
-elseif strcmpi(filenameEnding, 'pgm') || strcmpi(filenameEnding, 'tif') || strcmpi(filenameEnding, 'jpg') || strcmpi(filenameEnding, 'bmp')
+elseif strcmpi(filenameEnding, 'pgm') || strcmpi(filenameEnding, 'tif') ||...
+        strcmpi(filenameEnding, 'jpg') || strcmpi(filenameEnding, 'bmp') ||...
+        strcmpi(filenameEnding, 'png')
     numDescriptor = FILETYPE.IMAGE;
     openFuncHandle =  @openOctImg;  
     filenameEnding = ['.' filenameEnding];
