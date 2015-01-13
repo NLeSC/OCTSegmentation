@@ -11,10 +11,9 @@
 % INPUT
 % filename_data- the filename of the raw data 
 % filename_metadata- the filename of the metadata 
-% display_number - slice number divisable by display_number will be displayed
 
 % OUPTPUT
-% data- 3D output array of voxel values of type uint8
+% data- 3D output array of raw voxel values
 
 % EXAMPLE
 % Called form the current file's directory:
