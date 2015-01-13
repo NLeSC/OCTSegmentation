@@ -143,7 +143,7 @@ function [data, image_data] = import_oct_bin_file(filename_data, filename_metada
             figure(fig);
             subplot(2,5,display_counter);
             map = colormap(gray(256));
-            image(image_data(:,:,z),map);
+            imshow(image_data(:,:,z),map);
             s = sprintf('Slice #: %d',z-1);
             title(s);
         end
