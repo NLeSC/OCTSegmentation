@@ -6,8 +6,8 @@
 %--------------------------------------------------------------------------
 %% FUNCTIONS
 %--------------------------------------------------------------------------
-%import_oct_csv_file - imports OCT CSV data (2D) from AMC Mitra Almasian
-%import_oct_bin_file - function to load AMC raw volumetric data from file
+%import_oct_csv_file(_raw) - imports OCT CSV data (2D) from AMC Mitra Almasian
+%import_oct_bin_file(_raw) - function to load AMC raw volumetric data from file
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %% From Matlab file exchange
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
