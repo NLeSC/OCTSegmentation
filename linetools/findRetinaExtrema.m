@@ -42,6 +42,10 @@ sigma2D = params.FINDRETINAEXTREMA_SIGMA_GRADIENT;
 gauss2D = fspecial('gaussian', sigma2D * 2+ 1, sigma2D);
 smoothedImg = imfilter(normOctimg, gauss2D, 'symmetric');
 
+% DEBUG
+%figure
+%subplot(2,2,1);imagesc(smoothedImg);colormap(gray(256));title('smoothed image');axis on, grid on
+
 [FX FZ] = gradient(real(smoothedImg));
 FZ = FZ ./ max(max(FZ));
 
@@ -55,6 +59,9 @@ if params.FINDRETINAEXTREMA_SIGMA_FZ ~= 0
 else
     smoothedFZ = FZ ./ max(max(FZ));
 end
+
+% DEBUG
+%subplot(2,2,2);imagesc(smoothedFZ);colormap(gray(256));title('smoothed gradient image');axis on, grid on
 
 if strcmp(mode, 'part')
     maxlines = extremafinder(smoothedFZ, c(1), 'max pos');

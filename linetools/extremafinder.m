@@ -52,6 +52,9 @@ gradoctimg(gradoctimg < 0) = -1;
 gradoctimg(gradoctimg > 0) = 1;
 extremaoctimg = gradoctimg(2:end, :) - gradoctimg(1:end-1, :);
 
+%DEBUG
+subplot(2,2,3);imagesc(gradoctimg);colormap(gray(256));title('image to find extrema');axis on, grid on
+ 
 % Delete rises/drops, if desired
 if numel(strfind(mode, 'min')) ~= 0 
     extremaoctimg(extremaoctimg < 0) = 0;
@@ -71,6 +74,9 @@ for i = 1:size(octimg,2)
     extremaoctimg(1:lineregion(1,i)-1,i) = 0;
     extremaoctimg(lineregion(2,i)+1:end,i) = 0;
 end
+
+%DEBUG
+%subplot(2,2,4);imagesc(extremaoctimg);colormap(gray(256));title('image to find extrema');axis on, grid on
 
 % Find the COUNT highest extrema.
  for i = 1:size(octimg,2) 
