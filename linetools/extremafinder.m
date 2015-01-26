@@ -53,7 +53,7 @@ gradoctimg(gradoctimg > 0) = 1;
 extremaoctimg = gradoctimg(2:end, :) - gradoctimg(1:end-1, :);
 
 %DEBUG
-subplot(2,2,3);imagesc(gradoctimg);colormap(gray(256));title('image to find extrema');axis on, grid on
+%subplot(2,2,3);imagesc(gradoctimg);colormap(gray(256));title('image to find extrema');axis on, grid on
  
 % Delete rises/drops, if desired
 if numel(strfind(mode, 'min')) ~= 0 

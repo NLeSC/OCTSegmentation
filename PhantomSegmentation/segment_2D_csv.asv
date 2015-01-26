@@ -44,16 +44,18 @@ lines = segment_phantom_lines(raw_data, params_infl, params_rpe);
 f1 = figure;
 figure(f1);
 
-rows = 2; cols = 3;
+rows = 2; cols = 4;
 subplot(rows,cols,1); imagesc(raw_data);colormap(gray(256));title('raw data');axis on; grid on
-%subplot(rows,cols,2); imagesc(scaled_data);colormap(gray(256));title('scaled data');axis on; grid on
-subplot(rows,cols,2); imagesc(filtered_data);colormap(gray(256));title('filtered\_data');axis on; grid on
-subplot(rows,cols,3); imagesc(thresh_data);colormap(gray(256));title('thersh\_data');axis on; grid on
+subplot(rows,cols,2); imagesc(scaled_data);colormap(gray(256));title('scaled data');axis on; grid on
+subplot(rows,cols,3); imagesc(filtered_data);colormap(gray(256));title('filtered\_data');axis on; grid on
+subplot(rows,cols,4); imagesc(thresh_data);colormap(gray(256));title('thersh\_data');axis on; grid on
 [size_x, size_y] = size(raw_data);
 
-subplot(rows,cols,4); imagesc(raw_data);colormap(gray(256));title('raw data');axis on; grid on
+subplot(rows,cols,1); imagesc(raw_data);colormap(gray(256));title('raw data');axis on; grid on
 hold on
-plot(1:size_y,lines(1,:),'r', 1:size_y,lines(2,:),'b');title('some layer borders ');axis on, grid on
+plot(1:size_y,lines(1,:));title('some layer border (max)');axis on, grid on
+axis([0 size_y 0 size_x]);axis ij
+subplot(rows,cols,6); plot(1:size_y,lines(2,:));title('some layer border (min)');axis on, grid on
 axis([0 size_y 0 size_x]);axis ij
 
 

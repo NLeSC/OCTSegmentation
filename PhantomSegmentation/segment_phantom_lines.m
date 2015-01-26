@@ -88,19 +88,9 @@ line_min_Ransac = ransacEstimate(line_min, 'poly', ...
                             PARAMSE.RPELIN_RANSAC_MAXITER, ...
                             PARAMSE.RPELIN_RANSAC_POLYNUMBER);
 
-% merge
-lmax = mergeLines(line_max, line_max_Ransac, 'discardOutliers', [PARAMSE.RPELIN_MERGE_THRESHOLD ...
-                                                           PARAMSE.RPELIN_MERGE_DILATE ...
-                                                           PARAMSE.RPELIN_MERGE_BORDER]);
-
-lmin = mergeLines(line_min, line_min_Ransac, 'discardOutliers', [PARAMSE.RPELIN_MERGE_THRESHOLD ...
-                                                           PARAMSE.RPELIN_MERGE_DILATE ...
-                                                           PARAMSE.RPELIN_MERGE_BORDER]);
-% lmax = line_max;
-% lmin = line_min;
 % smooth
-line_max =  linesweeter(lmax, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
-line_min =  linesweeter(lmin, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
+line_max =  linesweeter(line_max_Ransac, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
+line_min =  linesweeter(line_min_Ransac, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
 
 lines(1,:) = line_max;
 lines(2,:) = line_min;
