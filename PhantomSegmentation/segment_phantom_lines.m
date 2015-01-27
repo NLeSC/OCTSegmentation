@@ -2,28 +2,17 @@
 %
 % author: Elena Ranguelova, NLeSc
 % date creation: 13-01-2014
-% modification date: 
-% modification details: 
+% modification date: 27-01-2015
+% modification details: Separate function for segmenting each individual
+% layer
 % -----------------------------------------------------------------------
 % SYNTAX
 % [lines]=segment_pahntom_lines(data, PARAMS)
 %
 % INPUT
-% data- 3D output array of voxel values
+% data- 2D inut array of image values
 % PARAMS:   Parameter struct for the automated segmentation
-%   In this function, the following parameters are currently used:
-%   RPELIN_SEGMENT_MEDFILT1 First median filter values (in z and x direction).
-%   Preprocessing before finding extrema. (suggestion: 5 7)
-%   RPELIN_SEGMENT_MEDFILT2 Second median filter values (in z and x direction).
-%   Preprocessing before finding extrema. Directly applied after the first
-%   median filter. (suggestion: Use the same settings)
-%   RPELIN_SEGMENT_LINESWEETER1 Linesweeter smoothing values before blood
-%   vessel region removal
-%   RPELIN_SEGMENT_LINESWEETER2 Linesweeter smoothing values after blood
-%   vessel region removal. This is the final smoothing applied to the RPELIN.
-%   RPELIN_SEGMENT_POLYDIST
-%   RPELIN_SEGMENT_POLYNUMBER
-%
+%  
 % OUPTPUT
 % lines between layers 
 
@@ -68,30 +57,30 @@ filtered_data = medfilt2(scaled_data,[13 17]);
 assignin('base', 'filtered_data', filtered_data);
 
 %% threshold the data
-thresh_data = treshold(filtered_data, 'ascanmax', [0.97 0.5]);
+thresh_data = treshold(filtered_data, 'ascanmax', [0.97 0.6]);
 %thresh_data = imadjust(thresh_data);
 %thresh_data = medfilt2(thresh_data,[3 5]);
 assignin('base', 'thresh_data', thresh_data);
 
 %% results
-%automatic
-line_max = findRetinaExtrema(thresh_data, PARAMSI, 1, 'max');
-line_min = findRetinaExtrema(thresh_data, PARAMSI, 1, 'min');
-% % ransac
-line_max_Ransac = ransacEstimate(line_max, 'poly', ...
-                            PARAMSE.RPELIN_RANSAC_NORM_RPE, ...
-                            PARAMSE.RPELIN_RANSAC_MAXITER, ...
-                            PARAMSE.RPELIN_RANSAC_POLYNUMBER);
-                        
-line_min_Ransac = ransacEstimate(line_min, 'poly', ...
-                            PARAMSE.RPELIN_RANSAC_NORM_RPE, ...
-                            PARAMSE.RPELIN_RANSAC_MAXITER, ...
-                            PARAMSE.RPELIN_RANSAC_POLYNUMBER);
+% lineregions for rough estimation of the layer 1
+lineregion1 = zeros(2,size(thresh_data,2));
+lineregion1(1,:) = 2;
+lineregion1(2,:) = 100;
 
-% smooth
-line_max =  linesweeter(line_max_Ransac, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
-line_min =  linesweeter(line_min_Ransac, PARAMSI.INFL_SEGMENT_LINESWEETER_FINAL);
+[line_upper1, line_lower1] =  segmentOneLayer(thresh_data, PARAMSI, PARAMSE, lineregion1);
 
-lines(1,:) = line_max;
-lines(2,:) = line_min;
+% lineregions for rough estimation of the layer 2
+lineregion2 = zeros(2,size(thresh_data,2));
+lineregion2(1,:) = lineregion1(2,:);
+lineregion2(2,:) = 200;
+
+[line_upper2, line_lower2] =  segmentOneLayer(thresh_data, PARAMSI, PARAMSE, lineregion2);
+
+lines(1,:) = line_upper1;
+lines(2,:) = line_lower1;
+lines(3,:) = line_upper2;
+lines(4,:) = line_lower2;
+
 assignin('base', 'lines', lines);
+

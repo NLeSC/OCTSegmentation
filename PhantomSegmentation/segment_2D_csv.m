@@ -44,7 +44,7 @@ lines = segment_phantom_lines(raw_data, params_infl, params_rpe);
 f1 = figure;
 figure(f1);
 
-rows = 2; cols = 3;
+rows = 2; cols = 2;
 subplot(rows,cols,1); imagesc(raw_data);colormap(gray(256));title('raw data');axis on; grid on
 %subplot(rows,cols,2); imagesc(scaled_data);colormap(gray(256));title('scaled data');axis on; grid on
 subplot(rows,cols,2); imagesc(filtered_data);colormap(gray(256));title('filtered\_data');axis on; grid on
@@ -53,7 +53,9 @@ subplot(rows,cols,3); imagesc(thresh_data);colormap(gray(256));title('thersh\_da
 
 subplot(rows,cols,4); imagesc(raw_data);colormap(gray(256));title('raw data');axis on; grid on
 hold on
-plot(1:size_y,lines(1,:),'r', 1:size_y,lines(2,:),'b');title('some layer borders ');axis on, grid on
+plot(1:size_y,lines(1,:),'r', 1:size_y,lines(2,:),'g',...
+    1:size_y,lines(3,:),'y', 1:size_y,lines(4,:),'b');
+title('top 2 layer borders ');axis on, grid on
 axis([0 size_y 0 size_x]);axis ij
 
 
