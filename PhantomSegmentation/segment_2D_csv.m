@@ -2,8 +2,8 @@
 %
 % author: Elena Ranguelova, NLeSc
 % date creation: 13-01-2015
-% modification date:
-% modification details:
+% modification date: 29-01-2015 
+% modification details: Commented out fixed paths and file names
 % -----------------------------------------------------------------------
 % SYNTAX
 % segment_2D_csv
@@ -21,8 +21,8 @@
 %--------------------------------------------------------------------------
 
 %% import the data
-%data_file = input('Enter the full filename of the phantom data saved in CSV  format: ', 's');
-data_file = '..\..\..\Data\Phantom\2D_CSV\fantoom0.csv';
+data_file = input('Enter the full filename of the phantom data saved in CSV  format: ', 's');
+%data_file = '..\..\..\Data\Phantom\2D_CSV\fantoom0.csv';
 
 if exist(data_file)
     raw_data = import_oct_csv_file_raw(data_file); 
@@ -31,8 +31,8 @@ else
 end
 
 %% parameters file
-%params_file = input('Enter the full filename of the parameters file: ', 's');
-params_file = 'octseg_phantom.param';
+params_file = input('Enter the full filename of the parameters file: ', 's');
+%params_file = 'octseg_phantom.param';
  
 params_infl = loadParameters('INFL', params_file);
 params_rpe = loadParameters('RPELIN', params_file);
