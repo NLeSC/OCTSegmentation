@@ -1,0 +1,19 @@
+{
+    "creators": [
+        {
+            "affiliation": "Netherlands eScience Center",
+            "name": "Ranguelova, Elena"
+        }
+    ],
+    "description": "Analyze retinal optical coherence tomography images.",
+    "keywords": [
+        "retina",
+        "OCT scan",
+        "automated segmentation",
+        "Optical Coherence Tomography Imaging"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "OCTSEG"
+}
